@@ -1,0 +1,10 @@
+FROM node:20-alpine AS base
+WORKDIR /app
+RUN corepack enable
+COPY package.json pnpm-workspace.yaml ./
+COPY apps/api/package.json apps/api/
+COPY packages/shared/package.json packages/shared/
+RUN pnpm install --filter @procureai/api... --frozen-lockfile=false
+COPY . .
+RUN pnpm --filter @procureai/api build
+CMD ["pnpm", "--filter", "@procureai/api", "start"]
